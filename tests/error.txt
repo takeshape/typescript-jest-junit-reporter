@@ -1,0 +1,6 @@
+src/errors.ts(11,13): error TS2339: Property 'statusCode' does not exist on type 'HTTPError | Error'.
+  Property 'statusCode' does not exist on type 'Error'.
+src/errors.ts(11,41): error TS2339: Property 'statusCode' does not exist on type 'HTTPError | Error'.
+  Property 'statusCode' does not exist on type 'Error'.
+src/errors.ts(17,13): error TS2339: Property 'statusCode' does not exist on type 'HTTPError | Error'.
+  Property 'statusCode' does not exist on type 'Error'.

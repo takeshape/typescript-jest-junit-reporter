@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<testsuites name="@takeshape/typescript-jest-junit-reporter" tests="0" failures="0" errors="0" time="0">
+  <testsuite name="type errors" tests="0" failures="0" errors="0" time="0" timestamp="2023-04-18T18:55:15">
+    <testcase name="no errors reported" classname="no errors reported"></testcase>
+  </testsuite>
+</testsuites>
