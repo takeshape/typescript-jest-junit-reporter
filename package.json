@@ -28,8 +28,7 @@
     "format": "eslint src --fix",
     "prepare": "npm run build",
     "release": "np --no-publish",
-    "test:dist": "npm run format && SCRIPT_PATH=./dist/main.js ./tests/test.sh",
-    "test:src": "npm run format && ./tests/test.sh"
+    "test": "npm run format && SCRIPT_PATH=../dist/main.js ./tests/test.sh"
   },
   "prettier": {
     "bracketSpacing": true,

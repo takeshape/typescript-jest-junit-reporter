@@ -4,17 +4,17 @@
     <testcase name="Property 'statusCode' does not exist on type 'HTTPError | Error'." classname="TS2339">
       <failure>error TS2339: Property 'statusCode' does not exist on type 'HTTPError | Error'.
   Property 'statusCode' does not exist on type 'Error'.
-    at (/Users/mshick/Code/takeshape/typescript-jest-junit-reporter/tests/src/errors.ts:11:13)</failure>
+    at (TESTS_PATH/src/errors.ts:11:13)</failure>
     </testcase>
     <testcase name="Property 'statusCode' does not exist on type 'HTTPError | Error'." classname="TS2339">
       <failure>error TS2339: Property 'statusCode' does not exist on type 'HTTPError | Error'.
   Property 'statusCode' does not exist on type 'Error'.
-    at (/Users/mshick/Code/takeshape/typescript-jest-junit-reporter/tests/src/errors.ts:11:41)</failure>
+    at (TESTS_PATH/src/errors.ts:11:41)</failure>
     </testcase>
     <testcase name="Property 'statusCode' does not exist on type 'HTTPError | Error'." classname="TS2339">
       <failure>error TS2339: Property 'statusCode' does not exist on type 'HTTPError | Error'.
   Property 'statusCode' does not exist on type 'Error'.
-    at (/Users/mshick/Code/takeshape/typescript-jest-junit-reporter/tests/src/errors.ts:17:13)</failure>
+    at (TESTS_PATH/src/errors.ts:17:13)</failure>
     </testcase>
   </testsuite>
 </testsuites>

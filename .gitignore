@@ -1,1 +1,6 @@
 node_modules
+
+# Output from test script
+tests/actual.txt
+tests/actual-no-error.txt
+tests/expected-paths-replaced.txt
