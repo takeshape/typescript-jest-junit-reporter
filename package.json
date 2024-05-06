@@ -21,7 +21,7 @@
   "type": "module",
   "main": "./src/main.js",
   "bin": {
-    "typescript-jest-junit-reporter": "./dist/main.js"
+    "typescript-jest-junit-reporter": "dist/main.js"
   },
   "scripts": {
     "build": "del-cli dist && esbuild src/main.js --bundle --platform=node --target=es2022 --main-fields=module,main --banner:js='#!/usr/bin/env node' --outdir=dist",
