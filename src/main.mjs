@@ -47,11 +47,14 @@ async function main(input, output) {
 }
 
 /**
- * @returns {string}
+ * @returns {Promise<string>}
  */
 async function getPackageName() {
   try {
     const pkgPath = await findUp('package.json')
+    if (!pkgPath) {
+      throw new Error('Could not find package.json')
+    }
     const pkgStr = await fs.readFile(pkgPath, 'utf-8')
     const pkg = JSON.parse(pkgStr)
     return pkg.name
@@ -72,7 +75,7 @@ async function getPackageName() {
  * @property {string} code
  * @property {string} message
  * @property {string} specificMessage
- * @property {string} [source]
+ * @property {[string, string]} source
  */
 
 // We only handle the format without --pretty right now
@@ -82,11 +85,18 @@ const UGLY_REGEX = /^(?<file>.+?)\((?<line>\d+),(?<col>\d+)\): error (?<code>\S+
  * @returns {Parser}
  */
 function newParser() {
+  /**
+   * @type {CompilerError[]}
+   */
   const errors = []
+
+  /**
+   * @type {(lines: string[]) => void}
+   */  
   function parse([line1, line2]) {
     const match = UGLY_REGEX.exec(line1)
 
-    if (match) {
+    if (match?.groups) {
       errors.push({
         filename: path.resolve(match.groups.file),
         line: Number(match.groups.line),
@@ -102,6 +112,9 @@ function newParser() {
   return { errors, parse }
 }
 
+/**
+ * @param {CompilerError}
+ */
 function getFailureText({ filename, line, col, code, message, specificMessage }) {
   return `error ${code}: ${message}
 ${specificMessage}
