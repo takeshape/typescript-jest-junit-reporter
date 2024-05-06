@@ -4201,7 +4201,6 @@ var require_lib = __commonJS({
 
 // node_modules/find-up/index.js
 var import_node_path2 = __toESM(require("path"), 1);
-var import_node_url2 = require("url");
 
 // node_modules/locate-path/index.js
 var import_node_process = __toESM(require("process"), 1);
@@ -4377,14 +4376,19 @@ async function locatePath(paths, {
   }, { concurrency, preserveOrder });
 }
 
+// node_modules/unicorn-magic/node.js
+var import_node_url2 = require("url");
+function toPath2(urlOrPath) {
+  return urlOrPath instanceof URL ? (0, import_node_url2.fileURLToPath)(urlOrPath) : urlOrPath;
+}
+
 // node_modules/find-up/index.js
-var toPath2 = (urlOrPath) => urlOrPath instanceof URL ? (0, import_node_url2.fileURLToPath)(urlOrPath) : urlOrPath;
 var findUpStop = Symbol("findUpStop");
 async function findUpMultiple(name, options = {}) {
-  let directory = import_node_path2.default.resolve(toPath2(options.cwd) || "");
+  let directory = import_node_path2.default.resolve(toPath2(options.cwd) ?? "");
   const { root } = import_node_path2.default.parse(directory);
-  const stopAt = import_node_path2.default.resolve(directory, options.stopAt || root);
-  const limit = options.limit || Number.POSITIVE_INFINITY;
+  const stopAt = import_node_path2.default.resolve(directory, toPath2(options.stopAt ?? root));
+  const limit = options.limit ?? Number.POSITIVE_INFINITY;
   const paths = [name].flat();
   const runMatcher = async (locateOptions) => {
     if (typeof name !== "function") {
