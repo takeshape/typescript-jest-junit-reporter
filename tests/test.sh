@@ -1,6 +1,6 @@
 #!/bin/sh
 
-SCRIPT_PATH='../src/main.js'
+SCRIPT_PATH='../src/main.mjs'
 
 cd tests
 

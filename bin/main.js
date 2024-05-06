@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+"use strict";
 var __create = Object.create;
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
@@ -4416,7 +4417,7 @@ async function findUp(name, options = {}) {
   return matches[0];
 }
 
-// src/main.js
+// src/main.mjs
 var import_promises = __toESM(require("fs/promises"), 1);
 var import_node_path3 = __toESM(require("path"), 1);
 var import_node_readline = __toESM(require("readline"), 1);
