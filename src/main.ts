@@ -36,15 +36,19 @@ async function main(input: Readable, output: Writable): Promise<number> {
     crlfDelay: Infinity
   });
 
-  let errorLines: string[] = [];
+  const errors: string[][] = [];
 
   for await (const line of rl) {
-    if (errorLines.length === 1) {
-      parser.parse([...errorLines, line]);
-      errorLines = [];
+    if (line.startsWith('  ')) {
+      // Multiline errors will indent continuation lines
+      errors[errors.length - 1].push(line);
     } else {
-      errorLines.push(line);
+      errors.push([line]);
     }
+  }
+
+  for (const err of errors) {
+    parser.parse(err);
   }
 
   const xml = toJunit(name, parser.errors);
@@ -102,7 +106,7 @@ function getFailureText({
   specificMessage
 }: CompilerError): string {
   return `error ${code}: ${message}
-${specificMessage}
+${specificMessage ?? message}
     at (${filename}:${line}:${col})`;
 }
 
