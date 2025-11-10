@@ -26,7 +26,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "del-cli dist && esbuild src/main.ts --bundle --platform=node --target=es2022 --main-fields=module,main --banner:js='#!/usr/bin/env node' --outdir=dist/bin",
+    "build": "del-cli dist && esbuild src/main.ts --bundle --platform=node --format=esm --target=es2022 --main-fields=module,main --banner:js='#!/usr/bin/env node' --outdir=dist/bin",
     "format": "biome format --write",
     "prepare": "npm run build",
     "release": "np --no-publish",
