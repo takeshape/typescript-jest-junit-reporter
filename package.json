@@ -1,6 +1,6 @@
 {
   "name": "@takeshape/typescript-jest-junit-reporter",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Produce Jest JUnit-style XML output from TypeScript compiler messages.",
   "keywords": [
     "typescript",
