@@ -8,6 +8,7 @@
     "junit",
     "xml"
   ],
+  "type": "module",
   "homepage": "https://github.com/takeshape/typescript-jest-junit-reporter#readme",
   "bugs": {
     "url": "https://github.com/takeshape/typescript-jest-junit-reporter/issues"
@@ -18,12 +19,14 @@
   },
   "license": "MIT",
   "author": "Michael Shick <michael@takeshape.io>",
-  "main": "./src/main.mjs",
   "bin": {
-    "typescript-jest-junit-reporter": "bin/main.js"
+    "typescript-jest-junit-reporter": "dist/bin/main.js"
   },
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "build": "del-cli dist && esbuild src/main.mjs --bundle --platform=node --target=es2022 --main-fields=module,main --banner:js='#!/usr/bin/env node' --outdir=bin",
+    "build": "del-cli dist && esbuild src/main.ts --bundle --platform=node --target=es2022 --main-fields=module,main --banner:js='#!/usr/bin/env node' --outdir=dist/bin",
     "format": "biome format --write",
     "prepare": "npm run build",
     "release": "np --no-publish",

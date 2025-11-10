@@ -1,21 +1,28 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import readline from 'node:readline';
+import type { Readable, Writable } from 'node:stream';
 import { findUp } from 'find-up';
 import { create } from 'xmlbuilder';
 
 const { TEST_TIMESTAMP } = process.env;
 
-/**
- * @typedef { import("stream").Readable } Readable
- * @typedef { import("stream").Writable } Writable
- */
+interface CompilerError {
+  filename: string;
+  line: number;
+  col: number;
+  code: string;
+  message: string;
+  specificMessage: string;
+  source: [string, string];
+}
 
-/**
- * @param {Readable} input
- * @param {Writable} output
- */
-async function main(input, output) {
+interface Parser {
+  errors: CompilerError[];
+  parse: (lines: string[]) => void;
+}
+
+async function main(input: Readable, output: Writable): Promise<number> {
   if (process.stdin.isTTY) {
     throw new Error('expected input to be piped in');
   }
@@ -29,7 +36,7 @@ async function main(input, output) {
     crlfDelay: Infinity
   });
 
-  let errorLines = [];
+  let errorLines: string[] = [];
 
   for await (const line of rl) {
     if (errorLines.length === 1) {
@@ -46,55 +53,28 @@ async function main(input, output) {
   return parser.errors.length ? 1 : 0;
 }
 
-/**
- * @returns {Promise<string>}
- */
-async function getPackageName() {
+async function getPackageName(): Promise<string> {
   try {
     const pkgPath = await findUp('package.json');
     if (!pkgPath) {
       throw new Error('Could not find package.json');
     }
     const pkgStr = await fs.readFile(pkgPath, 'utf-8');
-    const pkg = JSON.parse(pkgStr);
+    const pkg = JSON.parse(pkgStr) as { name: string };
     return pkg.name;
   } catch {
     return 'Unknown Package';
   }
 }
 
-/**
- * @typedef {object} Parser
- * @property {CompilerError[]} errors
- * @property {(lines: string[]) => void} parse
- *
- * @typedef {object} CompilerError
- * @property {string} filename
- * @property {number} line
- * @property {number} col
- * @property {string} code
- * @property {string} message
- * @property {string} specificMessage
- * @property {[string, string]} source
- */
-
 // We only handle the format without --pretty right now
 const UGLY_REGEX =
   /^(?<file>.+?)\((?<line>\d+),(?<col>\d+)\): error (?<code>\S+?): (?<message>.+)$/;
 
-/**
- * @returns {Parser}
- */
-function newParser() {
-  /**
-   * @type {CompilerError[]}
-   */
-  const errors = [];
+function newParser(): Parser {
+  const errors: CompilerError[] = [];
 
-  /**
-   * @type {(lines: string[]) => void}
-   */
-  function parse([line1, line2]) {
+  function parse([line1, line2]: string[]): void {
     const match = UGLY_REGEX.exec(line1);
 
     if (match?.groups) {
@@ -113,9 +93,6 @@ function newParser() {
   return { errors, parse };
 }
 
-/**
- * @param {CompilerError}
- */
 function getFailureText({
   filename,
   line,
@@ -123,18 +100,13 @@ function getFailureText({
   code,
   message,
   specificMessage
-}) {
+}: CompilerError): string {
   return `error ${code}: ${message}
 ${specificMessage}
     at (${filename}:${line}:${col})`;
 }
 
-/**
- * @param {string} name
- * @param {CompilerError[]} errors
- * @returns {string}
- */
-function toJunit(name, errors) {
+function toJunit(name: string, errors: CompilerError[]): string {
   const timestamp = TEST_TIMESTAMP ? parseInt(TEST_TIMESTAMP, 10) : Date.now();
 
   const obj = {
@@ -171,11 +143,11 @@ function toJunit(name, errors) {
 }
 
 main(process.stdin, process.stdout)
-  .catch((err) => {
+  .catch((err: Error) => {
     // eslint-disable-next-line no-console
     console.error('ERROR: ' + err.message);
     return 1;
   })
-  .then((code) => {
+  .then((code: number | undefined) => {
     process.exit(code);
   });
