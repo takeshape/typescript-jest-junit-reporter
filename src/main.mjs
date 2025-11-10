@@ -1,10 +1,10 @@
-import { findUp } from 'find-up'
-import fs from 'node:fs/promises'
-import path from 'node:path'
-import readline from 'node:readline'
-import { create } from 'xmlbuilder'
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import readline from 'node:readline';
+import { findUp } from 'find-up';
+import { create } from 'xmlbuilder';
 
-const { TEST_TIMESTAMP } = process.env
+const { TEST_TIMESTAMP } = process.env;
 
 /**
  * @typedef { import("stream").Readable } Readable
@@ -17,33 +17,33 @@ const { TEST_TIMESTAMP } = process.env
  */
 async function main(input, output) {
   if (process.stdin.isTTY) {
-    throw new Error('expected input to be piped in')
+    throw new Error('expected input to be piped in');
   }
 
-  const name = await getPackageName()
+  const name = await getPackageName();
 
-  const parser = newParser()
+  const parser = newParser();
 
   const rl = readline.createInterface({
     input,
-    crlfDelay: Infinity,
-  })
+    crlfDelay: Infinity
+  });
 
-  let errorLines = []
+  let errorLines = [];
 
   for await (const line of rl) {
     if (errorLines.length === 1) {
-      parser.parse([...errorLines, line])
-      errorLines = []
+      parser.parse([...errorLines, line]);
+      errorLines = [];
     } else {
-      errorLines.push(line)
+      errorLines.push(line);
     }
   }
 
-  const xml = toJunit(name, parser.errors)
-  output.write(xml + '\n')
+  const xml = toJunit(name, parser.errors);
+  output.write(xml + '\n');
 
-  return parser.errors.length ? 1 : 0
+  return parser.errors.length ? 1 : 0;
 }
 
 /**
@@ -51,15 +51,15 @@ async function main(input, output) {
  */
 async function getPackageName() {
   try {
-    const pkgPath = await findUp('package.json')
+    const pkgPath = await findUp('package.json');
     if (!pkgPath) {
-      throw new Error('Could not find package.json')
+      throw new Error('Could not find package.json');
     }
-    const pkgStr = await fs.readFile(pkgPath, 'utf-8')
-    const pkg = JSON.parse(pkgStr)
-    return pkg.name
+    const pkgStr = await fs.readFile(pkgPath, 'utf-8');
+    const pkg = JSON.parse(pkgStr);
+    return pkg.name;
   } catch {
-    return 'Unknown Package'
+    return 'Unknown Package';
   }
 }
 
@@ -79,7 +79,8 @@ async function getPackageName() {
  */
 
 // We only handle the format without --pretty right now
-const UGLY_REGEX = /^(?<file>.+?)\((?<line>\d+),(?<col>\d+)\): error (?<code>\S+?): (?<message>.+)$/
+const UGLY_REGEX =
+  /^(?<file>.+?)\((?<line>\d+),(?<col>\d+)\): error (?<code>\S+?): (?<message>.+)$/;
 
 /**
  * @returns {Parser}
@@ -88,13 +89,13 @@ function newParser() {
   /**
    * @type {CompilerError[]}
    */
-  const errors = []
+  const errors = [];
 
   /**
    * @type {(lines: string[]) => void}
-   */  
+   */
   function parse([line1, line2]) {
-    const match = UGLY_REGEX.exec(line1)
+    const match = UGLY_REGEX.exec(line1);
 
     if (match?.groups) {
       errors.push({
@@ -104,21 +105,28 @@ function newParser() {
         code: match.groups.code,
         message: match.groups.message,
         specificMessage: line2,
-        source: [line1, line2],
-      })
+        source: [line1, line2]
+      });
     }
   }
 
-  return { errors, parse }
+  return { errors, parse };
 }
 
 /**
  * @param {CompilerError}
  */
-function getFailureText({ filename, line, col, code, message, specificMessage }) {
+function getFailureText({
+  filename,
+  line,
+  col,
+  code,
+  message,
+  specificMessage
+}) {
   return `error ${code}: ${message}
 ${specificMessage}
-    at (${filename}:${line}:${col})`
+    at (${filename}:${line}:${col})`;
 }
 
 /**
@@ -127,7 +135,7 @@ ${specificMessage}
  * @returns {string}
  */
 function toJunit(name, errors) {
-  const timestamp = TEST_TIMESTAMP ? parseInt(TEST_TIMESTAMP, 10) : Date.now()
+  const timestamp = TEST_TIMESTAMP ? parseInt(TEST_TIMESTAMP, 10) : Date.now();
 
   const obj = {
     testsuites: {
@@ -148,26 +156,26 @@ function toJunit(name, errors) {
               '@name': err.message,
               '@classname': err.code,
               failure: {
-                '#text': getFailureText(err),
-              },
+                '#text': getFailureText(err)
+              }
             }))
           : {
               '@name': 'no errors reported',
-              '@classname': 'no errors reported',
-            },
-      },
-    },
-  }
+              '@classname': 'no errors reported'
+            }
+      }
+    }
+  };
 
-  return create(obj).end({ pretty: true, allowEmpty: true })
+  return create(obj).end({ pretty: true, allowEmpty: true });
 }
 
 main(process.stdin, process.stdout)
   .catch((err) => {
     // eslint-disable-next-line no-console
-    console.error('ERROR: ' + err.message)
-    return 1
+    console.error('ERROR: ' + err.message);
+    return 1;
   })
   .then((code) => {
-    process.exit(code)
-  })
+    process.exit(code);
+  });

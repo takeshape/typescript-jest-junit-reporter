@@ -24,84 +24,16 @@
   },
   "scripts": {
     "build": "del-cli dist && esbuild src/main.mjs --bundle --platform=node --target=es2022 --main-fields=module,main --banner:js='#!/usr/bin/env node' --outdir=bin",
-    "format": "eslint src --fix --ext .mjs,.js,.json",
+    "format": "biome format --write",
     "prepare": "npm run build",
     "release": "np --no-publish",
-    "test": "npm run format && SCRIPT_PATH=../bin/main.js ./tests/test.sh"
+    "test": "biome check --error-on-warnings && SCRIPT_PATH=../bin/main.js ./tests/test.sh"
   },
-  "prettier": {
-    "bracketSpacing": true,
-    "jsxSingleQuote": true,
-    "printWidth": 100,
-    "semi": false,
-    "singleQuote": true,
-    "tabWidth": 2,
-    "trailingComma": "all"
-  },
-  "eslintConfig": {
-    "env": {
-      "node": true
-    },
-    "parserOptions": {
-      "ecmaVersion": 12,
-      "sourceType": "module"
-    },
-    "extends": [
-      "eslint:recommended"
-    ],
-    "rules": {
-      "capitalized-comments": "off",
-      "no-console": "error",
-      "no-unreachable": "error"
-    },
-    "overrides": [
-      {
-        "files": [
-          "**/*.js"
-        ],
-        "extends": [
-          "plugin:prettier/recommended"
-        ]
-      },
-      {
-        "files": [
-          "*.json"
-        ],
-        "plugins": [
-          "json-format"
-        ]
-      },
-      {
-        "files": [
-          "*.mdx",
-          "*.md"
-        ],
-        "settings": {
-          "mdx/code-blocks": false,
-          "mdx/language-mapper": {}
-        },
-        "extends": "plugin:mdx/recommended",
-        "rules": {
-          "indent": "off"
-        }
-      }
-    ]
-  },
-  "eslintIgnore": [
-    "dist",
-    "tsconfig.json",
-    "package-lock.json"
-  ],
-  "optionalDependencies": {
+  "devDependencies": {
+    "@biomejs/biome": "2.2.4",
     "@types/node": "^20.12.10",
     "del-cli": "^5.1.0",
     "esbuild": "^0.20.2",
-    "eslint": "^8.57.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-import": "^2.29.1",
-    "eslint-plugin-json-format": "^2.0.1",
-    "eslint-plugin-mdx": "^3.1.5",
-    "eslint-plugin-prettier": "^5.1.3",
     "find-up": "^7.0.0",
     "np": "10.0.5",
     "prettier": "^3.2.5",
@@ -109,7 +41,7 @@
     "xmlbuilder": "15.1.1"
   },
   "engines": {
-    "node": "^18.0.0 || ^20.0.0"
+    "node": ">=20"
   },
   "publishConfig": {
     "access": "public"
