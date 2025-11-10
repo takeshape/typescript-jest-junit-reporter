@@ -1,6 +1,6 @@
 #!/bin/sh
 
-SCRIPT_PATH='../src/main.mjs'
+SCRIPT_PATH='../src/main.ts'
 
 cd tests
 
@@ -8,7 +8,7 @@ find_error_path=$(pwd)
 
 export TEST_TIMESTAMP='1681844115457'
 
-cat error.txt | node "$SCRIPT_PATH" >actual.txt
+cat error.txt | npx tsx "$SCRIPT_PATH" >actual.txt
 
 error=$?
 
@@ -27,7 +27,7 @@ if [ "$error_diff" != "0" ]; then
   exit 1
 fi
 
-cat no-error.txt | node "$SCRIPT_PATH" >actual-no-error.txt
+cat no-error.txt | npx tsx "$SCRIPT_PATH" >actual-no-error.txt
 
 no_error=$?
 

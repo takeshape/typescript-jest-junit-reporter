@@ -48,7 +48,7 @@ async function main(input: Readable, output: Writable): Promise<number> {
   }
 
   const xml = toJunit(name, parser.errors);
-  output.write(xml + '\n');
+  output.write(`${xml}\n`);
 
   return parser.errors.length ? 1 : 0;
 }
@@ -144,8 +144,7 @@ function toJunit(name: string, errors: CompilerError[]): string {
 
 main(process.stdin, process.stdout)
   .catch((err: Error) => {
-    // eslint-disable-next-line no-console
-    console.error('ERROR: ' + err.message);
+    console.error(`ERROR: ${err.message}`);
     return 1;
   })
   .then((code: number | undefined) => {
